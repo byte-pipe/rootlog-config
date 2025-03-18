@@ -1,0 +1,11 @@
+[run]
+branch = True
+source =
+    utility
+    tests
+
+[report]
+omit =
+    */__init__.py
+    tests/*
+    **/*/examples
