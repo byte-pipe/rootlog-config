@@ -5,9 +5,9 @@ description = "Simple Python logging utility that configures the root logger pro
 authors = ["Python Logger Contributors"]
 readme = "README.md"
 license = "MIT"
-homepage = "https://github.com/python-logger/simple-logger"
-repository = "https://github.com/python-logger/simple-logger"
-documentation = "https://github.com/python-logger/simple-logger#readme"
+homepage = "https://github.com/byte-pipe/simple-logger"
+repository = "https://github.com/byte-pipe/simple-logger"
+documentation = "https://github.com/byte-pipe/simple-logger#readme"
 keywords = ["logging", "logger", "console", "file", "rotation", "colors", "thread-safe", "root-logger"]
 classifiers = [
     "Development Status :: 4 - Beta",
