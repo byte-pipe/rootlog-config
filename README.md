@@ -33,7 +33,7 @@ logging.debug("Debug messages go to file by default")
 ## Installation
 
 ```bash
-pip install simple-logger
+pip install rootlog-config
 ```
 
 ## Features

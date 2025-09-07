@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "simple-logger"
+name = "rootlog-config"
 version = "0.1.0"
 description = "Simple Python logging utility that configures the root logger properly. One function call for both console and file logging with colors, rotation, and thread safety."
 authors = ["Python Logger Contributors"]
