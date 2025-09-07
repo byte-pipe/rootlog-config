@@ -3,12 +3,12 @@
 import logging
 import threading
 
-from logger import check_registered_loggers, setup_logger
+from rootlog import check_registered_loggers, rootlog_config
 
 
 def test_simple():
     """Simple logging example."""
-    setup_logger()
+    rootlog_config()
     logging.debug("This is a debug message")
     logging.info("This is an info message")
     logging.warning("This is a warning message")
@@ -29,7 +29,7 @@ def test_across_threads():
         logging.info("Module B: Info message")
         logging.warning("Module B: Warning message")
 
-    setup_logger(level_c=logging.INFO)
+    rootlog_config(level_c=logging.INFO)
     logging.debug("Main: Debug message (should not appear)")
     logging.info("Main: Info message")
     logging.warning("Main: Warning message")

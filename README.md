@@ -1,6 +1,6 @@
 # Python Logger Utility
 
-A simple, powerful Python logging utility that configures the root logger properly. No more complex setup - just call `setup_logger()` once and use standard `logging.info()` everywhere.
+A simple, powerful Python logging utility that configures the root logger properly. No more complex setup - just call `rootlog_config()` once and use standard `logging.info()` everywhere.
 
 ## Why This Logger?
 
@@ -18,11 +18,11 @@ Python's built-in logging is powerful but complex to set up correctly. This util
 ## Quick Start
 
 ```python
-from logger import setup_logger
+from rootlog import rootlog_config
 import logging
 
 # Configure once at application entry point
-setup_logger(app="myapp")
+rootlog_config(app="myapp")
 
 # Use standard logging everywhere
 logging.info("This works perfectly!")
@@ -41,11 +41,11 @@ pip install rootlog-config
 ### Basic Usage
 
 ```python
-from logger import setup_logger
+from rootlog import rootlog_config
 import logging
 
 # Minimal setup - uses sensible defaults
-setup_logger()
+rootlog_config()
 
 # Logs to both console (colored) and file (rotated)
 logging.info("Hello, world!")
@@ -55,7 +55,7 @@ logging.info("Hello, world!")
 
 ```python
 # Automatically uses script name for log directory
-setup_logger(script=__file__)
+rootlog_config(script=__file__)
 
 # Creates logs in ~/python-log/my_script/YYYYMMDD-HH.log
 ```
@@ -63,7 +63,7 @@ setup_logger(script=__file__)
 ### Custom Configuration
 
 ```python
-setup_logger(
+rootlog_config(
     app="myapp",
     level_c=logging.WARNING,  # Console level
     level_f=logging.DEBUG,    # File level
@@ -77,7 +77,7 @@ setup_logger(
 
 ```python
 # For applications with many threads logging frequently
-setup_logger(app="highperf", use_queue=True)
+rootlog_config(app="highperf", use_queue=True)
 
 # All logging calls are now queued and handled by background thread
 logging.info("Thread-safe logging!")
@@ -87,14 +87,14 @@ logging.info("Thread-safe logging!")
 
 ```python
 # Size-based rotation
-setup_logger(app="big", rotation="100 MB")
-setup_logger(app="huge", rotation="1 GB")
+rootlog_config(app="big", rotation="100 MB")
+rootlog_config(app="huge", rotation="1 GB")
 
 # Time-based rotation
-setup_logger(app="daily", rotation="1 day")
-setup_logger(app="hourly", rotation="1 hour")
-setup_logger(app="weekly", rotation="1 week")
-setup_logger(app="midnight", rotation="00:00")
+rootlog_config(app="daily", rotation="1 day")
+rootlog_config(app="hourly", rotation="1 hour")
+rootlog_config(app="weekly", rotation="1 week")
+rootlog_config(app="midnight", rotation="00:00")
 ```
 
 ### Error Resilience
@@ -102,7 +102,7 @@ setup_logger(app="midnight", rotation="00:00")
 ```python
 # If file logging fails (permissions, disk full, etc.)
 # automatically falls back to console logging with warning
-setup_logger(app="robust")
+rootlog_config(app="robust")
 logging.info("This works even on read-only filesystems!")
 ```
 
@@ -120,11 +120,11 @@ This utility follows Python logging best practices:
 
 ```python
 # main.py
-from logger import setup_logger
+from rootlog import rootlog_config
 import logging
 from mymodule import do_something
 
-setup_logger(app="myapp")
+rootlog_config(app="myapp")
 logging.info("Application started")
 do_something()
 
@@ -141,10 +141,10 @@ def do_something():
 ```python
 import threading
 import time
-from logger import setup_logger
+from rootlog import rootlog_config
 import logging
 
-setup_logger(app="threaded", use_queue=True)
+rootlog_config(app="threaded", use_queue=True)
 
 def worker(name):
     for i in range(5):

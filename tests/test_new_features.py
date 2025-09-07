@@ -7,8 +7,8 @@ import threading
 import time
 from unittest.mock import patch
 
-from logger import setup_logger
-from logger.logger import _create_file_handler, _parse_rotation
+from rootlog import rootlog_config
+from rootlog.config import _create_file_handler, _parse_rotation
 
 
 class TestRotationParsing:
@@ -86,7 +86,7 @@ class TestRotationParsing:
 class TestFileHandlerCreation:
     """Test file handler creation with different rotation configurations."""
 
-    @patch("logger.logger.datetime")
+    @patch("rootlog.config.datetime")
     def test_default_rotation_handler(self, mock_datetime, tmp_path):
         """Test default rotation handler creation."""
         mock_datetime.datetime.now.return_value = datetime.datetime(2024, 1, 1, 12, 0)
@@ -97,7 +97,7 @@ class TestFileHandlerCreation:
         assert handler.backupCount == 5
         assert handler.level == logging.DEBUG
 
-    @patch("logger.logger.datetime")
+    @patch("rootlog.config.datetime")
     def test_size_rotation_handler(self, mock_datetime, tmp_path):
         """Test size-based rotation handler creation."""
         mock_datetime.datetime.now.return_value = datetime.datetime(2024, 1, 1, 12, 0)
@@ -108,7 +108,7 @@ class TestFileHandlerCreation:
         assert handler.backupCount == 5
         assert handler.level == logging.INFO
 
-    @patch("logger.logger.datetime")
+    @patch("rootlog.config.datetime")
     def test_time_rotation_handler(self, mock_datetime, tmp_path):
         """Test time-based rotation handler creation."""
         mock_datetime.datetime.now.return_value = datetime.datetime(2024, 1, 1, 12, 0)
@@ -120,7 +120,7 @@ class TestFileHandlerCreation:
         assert handler.backupCount == 7
         assert handler.level == logging.WARNING
 
-    @patch("logger.logger.datetime")
+    @patch("rootlog.config.datetime")
     def test_testing_filename(self, mock_datetime, tmp_path):
         """Test testing filename generation."""
         mock_datetime.datetime.now.return_value = datetime.datetime(2024, 1, 1, 12, 0)
@@ -136,7 +136,7 @@ class TestQueueLogging:
 
     def test_queue_logging_setup(self):
         """Test that queue logging is properly set up."""
-        logger = setup_logger(app="queue-test", use_queue=True, logger_name="test_queue")
+        logger = rootlog_config(app="queue-test", use_queue=True, logger_name="test_queue")
 
         # Check that queue handler was added
         assert len(logger.handlers) == 1
@@ -154,7 +154,7 @@ class TestQueueLogging:
 
     def test_queue_logging_thread_safety(self):
         """Test that queue logging works correctly with multiple threads."""
-        setup_logger(app="thread-test", use_queue=True, log_c=False, log_f=False)
+        rootlog_config(app="thread-test", use_queue=True, log_c=False, log_f=False)
 
         messages = []
         original_info = logging.info
@@ -202,7 +202,7 @@ class TestErrorHandling:
 
         try:
             # Should not raise exception, should fall back to console
-            logger = setup_logger(app="error-test", logger_name="error_logger")
+            logger = rootlog_config(app="error-test", logger_name="error_logger")
 
             # Should have at least one handler (console fallback)
             assert len(logger.handlers) > 0
@@ -220,13 +220,13 @@ class TestErrorHandling:
             # Clean up
             logger.handlers.clear()
 
-    @patch("logger.logger.Path.mkdir")
+    @patch("rootlog.config.Path.mkdir")
     def test_permission_error_fallback(self, mock_mkdir):
         """Test graceful fallback when directory creation fails."""
         mock_mkdir.side_effect = PermissionError("Permission denied")
 
         # Should not raise exception
-        logger = setup_logger(app="permission-test", logger_name="perm_logger")
+        logger = rootlog_config(app="permission-test", logger_name="perm_logger")
 
         # Should have console handler as fallback
         assert len(logger.handlers) > 0
@@ -236,7 +236,7 @@ class TestErrorHandling:
 
     def test_no_handlers_fallback(self):
         """Test fallback when both console and file logging are disabled."""
-        logger = setup_logger(app="no-handlers", logger_name="no_handler_logger", log_c=False, log_f=False)
+        logger = rootlog_config(app="no-handlers", logger_name="no_handler_logger", log_c=False, log_f=False)
 
         # Should have no handlers since both are disabled
         assert len(logger.handlers) == 0
@@ -251,11 +251,11 @@ class TestParameterValidation:
     def test_logger_name_vs_root_logger(self):
         """Test difference between named logger and root logger configuration."""
         # Root logger returns None
-        result = setup_logger(app="root-test")
+        result = rootlog_config(app="root-test")
         assert result is None
 
         # Named logger returns logger instance
-        logger = setup_logger(app="named-test", logger_name="test_named")
+        logger = rootlog_config(app="named-test", logger_name="test_named")
         assert logger is not None
         assert logger.name == "test_named"
 
@@ -264,7 +264,7 @@ class TestParameterValidation:
 
     def test_level_precedence(self):
         """Test that logger level is set to minimum of console and file levels."""
-        logger = setup_logger(app="level-test", logger_name="level_logger", level_c=logging.WARNING, level_f=logging.DEBUG)
+        logger = rootlog_config(app="level-test", logger_name="level_logger", level_c=logging.WARNING, level_f=logging.DEBUG)
 
         # Logger level should be minimum (DEBUG)
         assert logger.level == logging.DEBUG
@@ -276,7 +276,7 @@ class TestParameterValidation:
         """Test custom format strings."""
         custom_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
-        logger = setup_logger(app="format-test", logger_name="format_logger", format_c=custom_format, format_f=custom_format, log_f=False)  # Only test console to avoid file complexities
+        logger = rootlog_config(app="format-test", logger_name="format_logger", format_c=custom_format, format_f=custom_format, log_f=False)  # Only test console to avoid file complexities
 
         # Check that console handler uses custom format
         console_handler = logger.handlers[0]
@@ -291,7 +291,7 @@ class TestIntegration:
 
     def test_complete_setup_workflow(self):
         """Test complete logger setup with all features."""
-        logger = setup_logger(
+        logger = rootlog_config(
             app="integration-test",
             logger_name="integration_logger",
             level_c=logging.INFO,
@@ -320,11 +320,11 @@ class TestIntegration:
         logger_name = "multi_setup_logger"
 
         # First setup
-        logger1 = setup_logger(app="multi-test", logger_name=logger_name, log_f=False)
+        logger1 = rootlog_config(app="multi-test", logger_name=logger_name, log_f=False)
         initial_handler_count = len(logger1.handlers)
 
         # Second setup - should clean up previous handlers
-        logger2 = setup_logger(app="multi-test", logger_name=logger_name, log_f=False)
+        logger2 = rootlog_config(app="multi-test", logger_name=logger_name, log_f=False)
 
         # Should be same logger instance with same number of handlers
         assert logger1 is logger2

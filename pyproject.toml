@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rootlog-config"
-version = "0.1.0"
+version = "0.2.0"
 description = "Simple Python logging utility that configures the root logger properly. One function call for both console and file logging with colors, rotation, and thread safety."
 authors = ["Python Logger Contributors"]
 readme = "README.md"
@@ -24,7 +24,7 @@ classifiers = [
     "Topic :: System :: Logging",
     "Topic :: Utilities",
 ]
-packages = [{ include = "logger" }]
+packages = [{ include = "rootlog" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"

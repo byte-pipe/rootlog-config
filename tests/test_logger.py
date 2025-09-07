@@ -4,13 +4,13 @@ from pathlib import Path
 from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
-from logger import setup_logger
+from rootlog import rootlog_config
 
 
 @pytest.fixture
 def mock_datetime():
     """Mock datetime to return a fixed time."""
-    with patch("logger.logger.datetime") as mock_dt:
+    with patch("rootlog.config.datetime") as mock_dt:
         mock_dt.datetime.now.return_value = datetime.datetime(2024, 1, 1, 12, 0)
         yield mock_dt
 
@@ -18,7 +18,7 @@ def mock_datetime():
 @pytest.fixture
 def mock_path(tmp_path):
     """Mock Path to return a temporary directory."""
-    with patch("logger.logger.Path") as mock_path:
+    with patch("rootlog.config.Path") as mock_path:
         # Mock home directory to use temporary directory
         mock_home = MagicMock()
         mock_home.__str__.return_value = str(tmp_path)
@@ -49,14 +49,14 @@ def mock_path(tmp_path):
 @pytest.fixture
 def mock_makedirs():
     """Mock os.makedirs to prevent directory creation."""
-    with patch("logger.logger.os.makedirs") as mock_makedirs:
+    with patch("rootlog.config.os.makedirs") as mock_makedirs:
         yield mock_makedirs
 
 
 @pytest.fixture
 def mock_rotating_handler():
     """Mock RotatingFileHandler to prevent file creation."""
-    with patch("logger.logger.RotatingFileHandler") as mock_handler:
+    with patch("rootlog.config.RotatingFileHandler") as mock_handler:
         handler_instance = MagicMock()
         # Ensure level attribute is properly set
         type(handler_instance).level = PropertyMock()
@@ -67,7 +67,7 @@ def mock_rotating_handler():
 def test_setup_logger_basic(mock_rotating_handler):
     """Test basic logger setup with default parameters."""
     # Test root logger configuration
-    result = setup_logger(app="test-app")
+    result = rootlog_config(app="test-app")
     assert result is None  # Root logger configuration returns None
 
     # Verify root logger configuration
@@ -82,7 +82,7 @@ def test_setup_logger_basic(mock_rotating_handler):
 def test_setup_logger_console_only():
     """Test logger setup with console output only."""
     # Test root logger configuration
-    result = setup_logger(app="test-app", log_f=False)
+    result = rootlog_config(app="test-app", log_f=False)
     assert result is None  # Root logger configuration returns None
 
     # Verify root logger configuration
@@ -98,7 +98,7 @@ def test_setup_logger_console_only():
 def test_setup_logger_file_only(mock_datetime, mock_path, mock_makedirs, mock_rotating_handler, tmp_path):
     """Test logger setup with file output only."""
     # Test root logger configuration
-    result = setup_logger(app="test-app", log_c=False)
+    result = rootlog_config(app="test-app", log_c=False)
     assert result is None  # Root logger configuration returns None
 
     # Verify root logger configuration
@@ -121,7 +121,7 @@ def test_setup_logger_file_only(mock_datetime, mock_path, mock_makedirs, mock_ro
 def test_setup_logger_custom_levels(mock_rotating_handler):
     """Test logger setup with custom logging levels."""
     # Test root logger configuration
-    result = setup_logger(app="test-app", level_c=logging.WARNING, level_f=logging.ERROR)
+    result = rootlog_config(app="test-app", level_c=logging.WARNING, level_f=logging.ERROR)
     assert result is None  # Root logger configuration returns None
 
     # Verify root logger configuration
@@ -142,7 +142,7 @@ def test_setup_logger_custom_levels(mock_rotating_handler):
 def test_setup_logger_custom_formats():
     """Test logger setup with custom formats."""
     custom_format = "%(levelname)s: %(message)s"
-    result = setup_logger(app="test-app", format_c=custom_format, format_f=custom_format)
+    result = rootlog_config(app="test-app", format_c=custom_format, format_f=custom_format)
     assert result is None  # Root logger configuration returns None
 
     # Verify root logger configuration
@@ -162,7 +162,7 @@ def test_setup_logger_custom_formats():
 def test_setup_logger_script_name(mock_datetime, mock_path, mock_makedirs, mock_rotating_handler, tmp_path):
     """Test logger setup using script name."""
     # Test root logger configuration
-    result = setup_logger(script="/path/to/my-script.py")
+    result = rootlog_config(script="/path/to/my-script.py")
     assert result is None  # Root logger configuration returns None
 
     # Verify root logger configuration
@@ -183,7 +183,7 @@ def test_setup_logger_script_name(mock_datetime, mock_path, mock_makedirs, mock_
 def test_setup_logger_rotating_file_params(mock_datetime, mock_path, mock_makedirs, mock_rotating_handler, tmp_path):
     """Test rotating file handler parameters."""
     # Test root logger configuration
-    result = setup_logger(app="test-app")
+    result = rootlog_config(app="test-app")
     assert result is None  # Root logger configuration returns None
 
     # Verify root logger configuration
@@ -202,10 +202,10 @@ def test_setup_logger_prevents_duplicates():
     logger_name = "test-logger"
 
     # Create logger twice with same name
-    logger1 = setup_logger(app="test-app", logger_name=logger_name)
+    logger1 = rootlog_config(app="test-app", logger_name=logger_name)
     handler_count = len(logger1.handlers)
 
-    logger2 = setup_logger(app="test-app", logger_name=logger_name)
+    logger2 = rootlog_config(app="test-app", logger_name=logger_name)
     assert len(logger2.handlers) == handler_count
     assert logger1 is logger2  # Should be the same logger instance
 
@@ -216,7 +216,7 @@ def test_setup_logger_prevents_duplicates():
 def test_setup_logger_color_config():
     """Test color configuration for console output."""
     # Test root logger configuration
-    result = setup_logger(app="test-app")
+    result = rootlog_config(app="test-app")
     assert result is None  # Root logger configuration returns None
 
     # Verify root logger configuration

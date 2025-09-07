@@ -145,7 +145,7 @@ def check_registered_loggers():
         logging.info(f"{name}: {logging.getLogger(name).getEffectiveLevel()}")
 
 
-def setup_logger(
+def rootlog_config(
     script: str = None,
     app: str = None,
     logger_name: str = None,
