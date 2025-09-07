@@ -33,7 +33,7 @@ logging.debug("Debug messages go to file by default")
 ## Installation
 
 ```bash
-pip install logger  # TODO: Update with final package name
+pip install simple-logger
 ```
 
 ## Features
